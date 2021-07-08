@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Guid>609448c0-4bea-4303-b775-7ba34b00c009</Guid>
+    <Name>SquadManager</Name>
+    <Description>Description:
+This mod aims to bring the squad functionality from LW2/LWOTC to vanilla WOTC. As the title implies, this is currently in BETA and things might get chnaged (enhanced?) in the future. For now, this is just a QoL improvement, allowing you to create and outfit squads and send them into missions. There are no tactical benefits associated with keeping soldiers assigned to the same squad (unlike LW2/LWOTC), so feel free to use it for all your role-playing needs.
+
+Requirements:
+WOTC expansion obviously
+X2WOTCCommunityHighlander (any version)
+
+Other notes:
+I have not had the chance to thoroughly test the mod with CI yet, but based on my preliminary testing, it seems to be working OK. Usual disclaimer to use at your own risk
+
+Credits:
+- Pavonis Interactive for creating LW2 in the first place and extending the longevity of this wonderful game
+- Peter (LWOTC dev) who has been very patient and helpful with all my noob questions
+- The usual suspects at the modder's discord (Iridar, robojumper, Xymanek, RustyDios and countless others) for indulging, inspiring and assisting me through this and countless other small mods that will probably never see the light of day</Description>
+    <SteamPublishID>0</SteamPublishID>
+    <AssemblyName>SquadManager</AssemblyName>
+    <RootNamespace>SquadManager</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Localization\" />
+    <Folder Include="Content" />
+    <Folder Include="Src\" />
+    <Folder Include="Src\SquadManager\" />
+    <Folder Include="Src\SquadManager\Classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config\XComSquadManager.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\UILibrary_SquadManager.upk">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\SquadManager.int">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ReadMe.txt" />
+    <Content Include="ModPreview.jpg" />
+    <Content Include="Config\XComEditor.ini" />
+    <Content Include="Config\XComEngine.ini" />
+    <Content Include="Config\XComGame.ini" />
+    <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\SquadManager\Classes\LWHelpTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UIButtonIconPC.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UIImageSelector_LW.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UIPersonnel_SquadBarracks.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UIScreenListener_AvengerHUD.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UIScreenListener_PersonnelSquadSelect.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UIScreenListener_SquadSelect_LW.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UIScrollingTextField.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UISquadClassItem.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UISquadContainer.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UISquadIconSelectionScreen.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UISquadImage.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UISquadListItem.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UISquadListItem_Small.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\UISquad_DropDown.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\X2DownloadableContentInfo_SquadManager.uc" />
+    <Content Include="Src\SquadManager\Classes\X2EventListener_Soldiers.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\XComGameState_LWPersistentSquad.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\SquadManager\Classes\XComGameState_LWSquadManager.uc">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
+</Project>
