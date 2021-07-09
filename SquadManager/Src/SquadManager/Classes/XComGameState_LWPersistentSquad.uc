@@ -444,7 +444,7 @@ simulated function SetSquadCrew(optional XComGameState UpdateState, optional boo
 		MissionSite = XComGameState_MissionSite(History.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
 	}
 
-	MaxSoldiers = class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission();
+	MaxSoldiers = class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission(MissionSite);
 	if (MissionSite != None)
 	{
 		bAllowWoundedSoldiers = MissionSite.GeneratedMission.Mission.AllowDeployWoundedUnits;

@@ -742,7 +742,7 @@ function EventListenerReturn ConfigureSquadOnEnterSquadSelect(Object EventData, 
 	UpdatedXComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(XComHQ.Class, XComHQ.ObjectID));
 	UpdatedXComHQ.Squad = SquadState.GetDeployableSoldierRefs(MissionData.Mission.AllowDeployWoundedUnits); 
 
-	MaxSoldiersInSquad = class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission();
+	MaxSoldiersInSquad = class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission(MissionSite);
 	if (UpdatedXComHQ.Squad.Length > MaxSoldiersInSquad)
 		UpdatedXComHQ.Squad.Length = MaxSoldiersInSquad;
 
