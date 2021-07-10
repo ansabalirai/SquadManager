@@ -3,20 +3,23 @@
   <PropertyGroup>
     <Guid>609448c0-4bea-4303-b775-7ba34b00c009</Guid>
     <Name>SquadManager</Name>
-    <Description>Description:
-This mod aims to bring the squad functionality from LW2/LWOTC to vanilla WOTC. As the title implies, this is currently in BETA and things might get chnaged (enhanced?) in the future. For now, this is just a QoL improvement, allowing you to create and outfit squads and send them into missions. There are no tactical benefits associated with keeping soldiers assigned to the same squad (unlike LW2/LWOTC), so feel free to use it for all your role-playing needs.
+    <Description>[h1]Overview:[/h1]
+This mod aims to bring the squad functionality from LW2/LWOTC to vanilla WOTC. As the title implies, this is currently in BETA and things might get chnaged (enhanced?) in the future. For now, this is just a QoL improvement, allowing you to create and outfit squads and send them into missions. There are no tactical benefits associated with keeping soldiers assigned to the same squad (unlike LW2/LWOTC), but in any case, feel free to use it for all your role-playing needs.
 
-Requirements:
+[h1]Requirements:[/h1]
 WOTC expansion obviously
 X2WOTCCommunityHighlander (any version)
 
-Other notes:
-I have not had the chance to thoroughly test the mod with CI yet, but based on my preliminary testing, it seems to be working OK. Usual disclaimer to use at your own risk
+[h1]Other notes:[/h1]
+While it can be installed in an ongoing campaign, I would recommend starting a new run. Otherwise, you may experience oddities such as not being able to assign soldiers currently on covert actions to any squads until they are back at the Avenger.
+I have not had the chance to thoroughly test the mod with CI yet, but based on my preliminary testing and helpful reporting by others, it seems to be working OK. I do not expect anything gamebreaking to happen, but the usual disclaimer to use at your own risk
 
-Credits:
-- Pavonis Interactive for creating LW2 in the first place and extending the longevity of this wonderful game
-- Peter (LWOTC dev) who has been very patient and helpful with all my noob questions
-- The usual suspects at the modder's discord (Iridar, robojumper, Xymanek, RustyDios and countless others) for indulging, inspiring and assisting me through this and countless other small mods that will probably never see the light of day</Description>
+[h1]Credits:[/h1]
+[list]
+[*] Pavonis Interactive for creating LW2 in the first place and extending the longevity of this wonderful game
+[*] Peter (LWOTC dev) who has been very patient and helpful with all my noob questions
+[*] The usual suspects over at the modder's discord (Iridar, robojumper, Xymanek, RustyDios and countless others) for indulging, inspiring and assisting me through this and countless other small mods that will probably never see the light of day
+[/list]</Description>
     <SteamPublishID>0</SteamPublishID>
     <AssemblyName>SquadManager</AssemblyName>
     <RootNamespace>SquadManager</RootNamespace>

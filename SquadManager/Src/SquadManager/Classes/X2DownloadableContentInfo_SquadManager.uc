@@ -15,8 +15,30 @@ class X2DownloadableContentInfo_SquadManager extends X2DownloadableContentInfo;
 /// DLC / Mod to perform custom processing in response. This will only be called once the first time a player loads a save that was
 /// create without the content installed. Subsequent saves will record that the content was installed.
 /// </summary>
+// Called when mod is first installed in an ongoing campaign - Thanks to TeslaRage for providing this snippet
 static event OnLoadedSavedGame()
-{}
+{
+    local XComGameState NewGameState;
+    local XComGameState_LWSquadManager SquadMgrState;
+    local bool bSquadManagerExist;
+
+	bSquadManagerExist = FALSE;
+
+    foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_LWSquadManager', SquadMgrState)
+    {
+        bSquadManagerExist = true;
+    }
+
+    if (!bSquadManagerExist)
+    {
+        // Create new Game State
+        NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("SquadManager: Mid campaign install");
+        SquadMgrState = XComGameState_LWSquadManager(NewGameState.CreateNewStateObject(class'XComGameState_LWSquadManager'));
+        SquadMgrState.InitSquadManagerListeners();
+        NewGameState.AddStateObject(SquadMgrState);
+        `GAMERULES.SubmitGameState(NewGameState);
+    }
+}
 
 /// <summary>
 /// Called when the player starts a new campaign while this DLC / Mod is installed
