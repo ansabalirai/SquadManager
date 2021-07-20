@@ -107,6 +107,8 @@ var config float LEADERSHIP_COVERTNESS_PER_MISSION;
 var config float LEADERSHIP_COVERTNESS_CAP;
 
 var config float SUPPRESSOR_INFILTRATION_EMPOWER_BONUS;
+
+var config bool SetSquadOnMissionForCA;
 //---------------------------
 // INIT ---------------------
 //---------------------------
@@ -667,12 +669,28 @@ function bool IsDeployedOnMission()
 		{
 			Soldier = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(SoldierRef.ObjectID));
 			// If any of the soldiers in the squad is on a covert action ( vanilla or CI version), we consider the squad as unavailable
-			//if ((Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot') || (Soldier.GetStatus() == eStatus_CovertAction))
-			if ((Soldier.GetStatus() == eStatus_CovertAction))
+			if (default.SetSquadOnMissionForCA)
 			{
-				bOnMission = TRUE;
-				return TRUE;
+				if ((Soldier.GetStatus() == eStatus_CovertAction))
+				{
+					bOnMission = TRUE;
+					return TRUE;
+				}
 			}
+
+			// If the config is disabled, we only consider squad as unavailable if any soldier is on an infiltration (CI)
+			// Not sure if it is currently working 
+			else
+			{
+				if ((Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot'))
+				{
+					bOnMission = TRUE;
+					return TRUE;
+				}
+			}
+
+			//if ((Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot') || (Soldier.GetStatus() == eStatus_CovertAction))
+			
 		}
 	}
 	bOnMission = FALSE;
