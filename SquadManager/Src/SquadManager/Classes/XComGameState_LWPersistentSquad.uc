@@ -494,6 +494,8 @@ simulated function SetSquadCrew(optional XComGameState UpdateState, optional boo
 	//fill out the squad as much as possible using the squad units
 	foreach SquadSoldiersToAssign(UnitRef)
 	{
+		if (MaxSoldiers < 4) {break;} // This is a dirty fix for not allowing auto selection of units violating the rank requirement on CAs since we cannot get that info easily here. A better way would be to detect if we are setting up for a CA explicitly instead
+		
 		if (XComHQ.Squad.Length >= MaxSoldiers) { continue; }
 
 		if (UnitRef.ObjectID != 0)
@@ -666,9 +668,15 @@ function bool IsDeployedOnMission()
 		if (SoldierRef.ObjectID != 0) 
 		{
 			Soldier = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(SoldierRef.ObjectID));
+<<<<<<< Updated upstream
 			// If any of the soldiers in the squad is on a covert action ( vanilla or CI version), we consider the squad as unavailable
 			//if ((Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot') || (Soldier.GetStatus() == eStatus_CovertAction))
 			if ((Soldier.GetStatus() == eStatus_CovertAction))
+=======
+			// If any of the soldiers in the squad is on an infiltration mission (CI), we consider the squad as unavailable. This means that even if squad member is on a covert action, the squad is still considered available
+			if ((Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot'))
+			//if ((Soldier.GetStatus() == eStatus_CovertAction))
+>>>>>>> Stashed changes
 			{
 				bOnMission = TRUE;
 				return TRUE;
