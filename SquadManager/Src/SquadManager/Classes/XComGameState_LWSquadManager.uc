@@ -571,7 +571,18 @@ function UpdateSquadPostMission(optional StateObjectReference MissionRef, option
 	}
 }
 
+// Update all squads
+function UpdateAllSquads()
+{
+	local int i;
+	
 
+	for(i = 0; i < Squads.Length; i++)
+	{
+		
+		GetSquad(i).IsDeployedOnMission();
+	}
+}
 //--------------- EVENT HANDLING ------------------
 
 function InitSquadManagerListeners()
@@ -585,9 +596,9 @@ function InitSquadManagerListeners()
 	EventMgr = `XEVENTMGR;
 	EventMgr.UnregisterFromAllEvents(ThisObj); // clear all old listeners to clear out old stuff before re-registering
 
-	EventMgr.RegisterForEvent(ThisObj, 'OnValidateDeployableSoldiers', ValidateDeployableSoldiersForSquads,,,,true); //Rai - Seems unused
+	EventMgr.RegisterForEvent(ThisObj, 'OnValidateDeployableSoldiers', ValidateDeployableSoldiersForSquads,,,,true); //Rai 
 	EventMgr.RegisterForEvent(ThisObj, 'OnSoldierListItemUpdateDisabled', SetDisabledSquadListItems,,,,true);  // hook to disable selecting soldiers if they are in another squad
-	EventMgr.RegisterForEvent(ThisObj, 'OnUpdateSquadSelectSoldiers', ConfigureSquadOnEnterSquadSelect, ELD_Immediate,,,true); // hook to set initial squad/soldiers on entering squad select - Rai - Seems unused
+	EventMgr.RegisterForEvent(ThisObj, 'OnUpdateSquadSelectSoldiers', ConfigureSquadOnEnterSquadSelect, ELD_Immediate,,,true); // hook to set initial squad/soldiers on entering squad select - Rai
 	EventMgr.RegisterForEvent(ThisObj, 'OnDismissSoldier', DismissSoldierFromSquad, ELD_Immediate,,,true); // allow clearing of units from existing squads when dismissed
 
 }
@@ -688,12 +699,13 @@ function EventListenerReturn ConfigureSquadOnEnterSquadSelect(Object EventData, 
 	local XComGameState_HeadquartersXCom	XComHQ, UpdatedXComHQ;
 	local UISquadSelect						SquadSelect;
 	local XComGameState_LWSquadManager		UpdatedSquadMgr;
-	local StateObjectReference				SquadRef;
+	local StateObjectReference				SquadRef, UnitRef;
 	local XComGameState_LWPersistentSquad	SquadState;
 	local bool								bInSquadEdit;
 	local XComGameState_MissionSite			MissionSite;
 	local GeneratedMissionData				MissionData;
 	local int								MaxSoldiersInSquad;
+	local array<StateObjectReference> 		SquadSoldiersToAssign;
 
 	//`LWTRACE("ConfigureSquadOnEnterSquadSelect : Starting listener.");
 	XComHQ = XComGameState_HeadquartersXCom(EventData);
@@ -720,6 +732,7 @@ function EventListenerReturn ConfigureSquadOnEnterSquadSelect(Object EventData, 
 
 	MissionSite = XComGameState_MissionSite(History.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
 	MissionData = MissionSite.GeneratedMission;
+	MaxSoldiersInSquad = class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission(MissionSite);
 
 	if (LaunchingMissionSquad.ObjectID > 0)
 	{
@@ -740,17 +753,28 @@ function EventListenerReturn ConfigureSquadOnEnterSquadSelect(Object EventData, 
 	UpdatedSquadMgr.LastMissionSquad = SquadState.GetReference();
 
 	UpdatedXComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(XComHQ.Class, XComHQ.ObjectID));
-	UpdatedXComHQ.Squad = SquadState.GetDeployableSoldierRefs(MissionData.Mission.AllowDeployWoundedUnits); 
+	SquadSoldiersToAssign = SquadState.GetDeployableSoldierRefs(MissionData.Mission.AllowDeployWoundedUnits); 
+	UpdatedXComHQ.Squad.Length = 0;
 
-	MaxSoldiersInSquad = class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission(MissionSite);
-	if (UpdatedXComHQ.Squad.Length > MaxSoldiersInSquad)
-		UpdatedXComHQ.Squad.Length = MaxSoldiersInSquad;
+	// //Disabled auto-filling to prevent unintended behavior with CA slots
+	if (MaxSoldiersInSquad < 4)
+	{
+		return ELR_NoInterrupt;
+	}
 
-	//if (NewGameState.GetNumGameStateObjects() > 0)
-		//`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	//else
-		//History.CleanupPendingGameState(NewGameState);
+    foreach SquadSoldiersToAssign(UnitRef)
+    {        
+        if (UpdatedXComHQ.Squad.Length >= MaxSoldiersInSquad) 
+		{ 
+			continue;  // in case squad contains more soldiers than are allowed on the mission
+		}
 
+        if (UnitRef.ObjectID != 0)
+        {
+			UpdatedXComHQ.Squad.AddItem(UnitRef);
+        }
+    }
+	
 	return ELR_NoInterrupt;
 }
 

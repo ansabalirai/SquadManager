@@ -426,6 +426,7 @@ simulated function UpdateSquadList()
 	local UISquadListItem SquadListItem;
 
 	SquadMgr = class'XComGameState_LWSquadManager'.static.GetSquadManager();
+	SquadMgr.UpdateAllSquads();
 	SquadListLength = SquadMgr.Squads.Length;
 	for(idx = 0; idx < SquadListLength; idx ++)
 	{

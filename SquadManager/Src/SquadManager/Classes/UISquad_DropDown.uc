@@ -190,27 +190,12 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 
 simulated function OnSquadSelected( UIList kList, int index )
 {
-	local XComGameState_LWPersistentSquad Squad;
-	local XComGameStateHistory History;
-	local int i;
-
 	if( onSelectedDelegate != none )
 	{
 		onSelectedDelegate(m_arrSquads[index]);
-		//Rai - Adding functionality to set mission status when squad from drop down list is selected
-		// Squad = XComGameState_LWPersistentSquad(History.GetGameStateForObjectID(m_arrSquads[index].ObjectID));
-		// if (Squad != none)
-		// 	Squad.SetMissionStatus(`XCOMHQ.MissionRef);
-
-		for(i = 0; i < m_arrSquads.Length; i++)
-		{
-			Squad = XComGameState_LWPersistentSquad(History.GetGameStateForObjectID(m_arrSquads[i].ObjectID));
-			Squad.IsDeployedOnMission();
-
-		}
-
 		Hide();
 	}
+	RefreshData();
 }
 
 //------------------------------------------------------

@@ -62,7 +62,7 @@ simulated function UISquadListItem_Small InitSquadListItem_Small(optional StateO
 
 	SquadNameText = Spawn(class'UIScrollingTextField', self);
 	SquadNameText.bAnimateOnInit = false;
-	SquadNameText.InitScrollingText(, "Squad Name", 286, 44, 6, true);
+	SquadNameText.InitScrollingText(, "", 286, 44, 6, true);
 
 	//SquadStatusText = Spawn(class'UIScrollingTextField', self);
 	//SquadStatusText.bAnimateOnInit = false;

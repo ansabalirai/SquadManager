@@ -121,7 +121,8 @@ simulated function Update()
 			ClassItem.InitSquadClassItem();
 			ClassItem.SetSize(38, 38);
 		}
-		ClassItem.LoadClassImage(UnitState.GetSoldierClassTemplate().IconImage);
+		//ClassItem.LoadClassImage(UnitState.GetSoldierClassTemplate().IconImage);
+		ClassItem.LoadClassImage(UnitState.GetSoldierClassIcon()); // Added based HL hook for dynamic class icons
 		ClassItem.SetAlpha(GetClassIconAlphaStatus(UnitState, SquadState)); // add dimming effect for unavailable soldiers
 		ClassItem.ShowTempIcon(false);
 		ClassItem.Show();
@@ -140,7 +141,8 @@ simulated function Update()
 			ClassItem.InitSquadClassItem();
 			ClassItem.SetSize(38, 38);
 		}
-		ClassItem.LoadClassImage(UnitState.GetSoldierClassTemplate().IconImage);
+		//ClassItem.LoadClassImage(UnitState.GetSoldierClassTemplate().IconImage);
+		ClassItem.LoadClassImage(UnitState.GetSoldierClassIcon()); // Added based HL hook for dynamic class icons
 		ClassItem.SetAlpha(GetClassIconAlphaStatus(UnitState, SquadState)); // add dimming effect for unavailable soldiers
 		ClassItem.ShowTempIcon(true);
 		ClassItem.Show();

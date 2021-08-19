@@ -27,14 +27,18 @@ var GeneratedMissionData MissionData;
 event OnInit(UIScreen Screen)
 {
 	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameStateHistory History;
 	local UISquadSelect SquadSelect;
 	local XComGameState_LWSquadManager SquadMgr;
+	local XComGameState_Unit UnitState;
 	//local UISquadSelect_InfiltrationPanel InfiltrationInfo;
 	local UISquadContainer SquadContainer;
 	local XComGameState_MissionSite MissionState;
+	local StateObjectReference NullRef;
 	local UITextContainer InfilRequirementText, MissionBriefText;
 	local float RequiredInfiltrationPct;
 	local string BriefingString;
+	local int idx;
 
 	if(!Screen.IsA('UISquadSelect')) return;
 
@@ -46,7 +50,9 @@ event OnInit(UIScreen Screen)
 	class'LWHelpTemplate'.static.AddHelpButton_Std('SquadSelect_Help', SquadSelect, 1057, 12);
 
 	XComHQ = `XCOMHQ;
+	History = `XCOMHISTORY;
 	SquadMgr = class'XComGameState_LWSquadManager'.static.GetSquadManager();
+	SquadMgr.UpdateAllSquads();
 
 	// pause and resume all headquarters projects in order to refresh state
 	// this is needed because exiting squad select without going on mission can result in projects being resumed w/o being paused, and they may be stale
@@ -82,86 +88,54 @@ event OnInit(UIScreen Screen)
 	} 
 	else 
 	{
-		//`LWTrace("UIScreenListener_SquadSelect_LW: Arrived from mission");
-		//`LWTrace("UIScreenListener_SquadSelect_LW: Setting up for generic mission and/or covert infiltration in case of CI");
-		// Rai - Do not change the launch button since we leave it to the game to select the appropriate strings here
-		//SquadSelect.LaunchButton.SetText(strStart);
-		//SquadSelect.LaunchButton.SetTitle(strInfiltration);
-
-		/*
-		if(SquadMgr.IsValidInfiltrationMission(XComHQ.MissionRef))
-		{
-			`Log("UIScreenListener_SquadSelect_LW: Setting up for generic mission");
-			SquadSelect.LaunchButton.SetText(strStart);
-			SquadSelect.LaunchButton.SetTitle(strInfiltration);
-
-			InfiltrationInfo = SquadSelect.Spawn(class'UISquadSelect_InfiltrationPanel', SquadSelect);
-			InfiltrationInfo.MCName = 'SquadSelect_InfiltrationInfo_LW';
-			InfiltrationInfo.MissionData = MissionData;
-			InfiltrationInfo.SquadSoldiers = SquadSelect.XComHQ.Squad;
-			InfiltrationInfo.DelayedInit(default.SquadInfo_DelayedInit);
-
-			// check if we need to infiltrate to 100% and display a message if so
-			MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(`XCOMHQ.MissionRef.ObjectID));
-			RequiredInfiltrationPct = class'XComGameState_LWPersistentSquad'.static.GetRequiredPctInfiltrationToLaunch(MissionState);
-			if (RequiredInfiltrationPct > 0.0)
-			{
-				InfilRequirementText = SquadSelect.Spawn(class'UITextContainer', SquadSelect);
-				InfilRequirementText.MCName = 'SquadSelect_InfiltrationRequirement_LW';
-				InfilRequirementText.bAnimateOnInit = false;
-				InfilRequirementText.InitTextContainer('',, 725, 100, 470, 50, true, class'UIUtilities_Controls'.const.MC_X2Background ,);
-				InfilRequirementText.bg.SetColor(class'UIUtilities_Colors'.const.BAD_HTML_COLOR);
-				InfilRequirementText.SetHTMLText(RequiredInfiltrationString(RequiredInfiltrationPct));
-				InfilRequirementText.SetAlpha(66);
-			}
-		} */
-
-		// KDM : Allow the 'Squad Container', which deals with squad selection on the Squad Select screen,
-		// to be hidden through non-creation. My controller-capable Squad Management mod has its own squad 
-		// selection and display UI which overlaps with LW2's UI.
-		if (!`ISCONTROLLERACTIVE)
-		{
-			// LW : Create the SquadContainer on a timer, to avoid creation issues that can arise when creating it immediately, when no pawn loading is present
-			SquadContainer = SquadSelect.Spawn(class'UISquadContainer', SquadSelect);
-			SquadContainer.CurrentSquadRef = SquadMgr.LaunchingMissionSquad;
-			SquadContainer.CurrentSquadRef = SquadMgr.LastMissionSquad;
-			SquadContainer.DelayedInit(0.75);
-		}
-
-		// Rai - Commenting this for now since this is not really needed on the squad select screen
-		/*
-
+		SquadContainer = SquadSelect.Spawn(class'UISquadContainer', SquadSelect);
+		
+		`Log("SquadBasedRoster: UIScreenListener_SquadSelect_LW: Arrived from mission");
 		MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
 
-		MissionBriefText = SquadSelect.Spawn (class'UITextContainer', SquadSelect);
-		MissionBriefText.MCName = 'SquadSelect_MissionBrief_LW';
-		MissionBriefText.bAnimateOnInit = false;
-		MissionBriefText.InitTextContainer('',, 35, 375, 400, 300, false);
-		BriefingString = "<font face='$TitleFont' size='22' color='#a7a085'>" $ CAPS(class'UIMissionIntro'.default.m_strMissionTitle) $ "</font>\n";
-		BriefingString $= "<font face='$NormalFont' size='22' color='#" $ class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR $ "'>";
-		BriefingString $= class'UIUtilities_LW'.static.GetMissionTypeString (XComHQ.MissionRef) $ "\n";
-		if (class'UIUtilities_LW'.static.GetTimerInfoString (MissionState) != "")
+		if (MissionState.GeneratedMission.MissionID != 0)
 		{
-			BriefingString $= class'UIUtilities_LW'.static.GetTimerInfoString (MissionState) $ "\n";
+			`Log("SquadBasedRoster: UIScreenListener_SquadSelect_LW: Setting up for an instant response mission");
+			// This is an instant response mission or at least, not an infiltration or CA
+			SquadContainer.CurrentSquadRef = SquadMgr.LaunchingMissionSquad;
+			SquadContainer.CurrentSquadRef = SquadMgr.LastMissionSquad;
+			
 		}
-		BriefingString $= class'UIUtilities_LW'.static.GetEvacTypeString (MissionState) $ "\n";
-		if (class'UIUtilities_LW'.static.HasSweepObjective(MissionState))
+
+		else
 		{
-			BriefingString $= class'UIUtilities_LW'.default.m_strSweepObjective $ "\n";
+			//Differentiate between CA and infiltration mission
+			if (SquadSelect.SoldierSlotCount < 4) // Hacky check which assumes that we will not have more than 4 people on a CA
+			{
+				`Log("SquadBasedRoster: UIScreenListener_SquadSelect_LW: Likley Setting up for a CA");
+				SquadContainer.CurrentSquadRef = SquadMgr.LaunchingMissionSquad;
+				SquadContainer.CurrentSquadRef = SquadMgr.LastMissionSquad;
+				// SquadContainer.CurrentSquadRef = NullRef;
+				
+				// for (idx = XComHQ.Squad.Length - 1; idx >= 0; idx--)
+				// {					
+				// 	XComHQ.Squad.Remove(idx, 1);	
+				// }
+				// SquadSelect.UpdateData();
+			}
+				
+			else
+			{
+				`Log("SquadBasedRoster: UIScreenListener_SquadSelect_LW: Likely Setting up for a infiltration mission (CI)");
+				SquadContainer.CurrentSquadRef = SquadMgr.LaunchingMissionSquad;
+				SquadContainer.CurrentSquadRef = SquadMgr.LastMissionSquad;
+			}
+				
+
 		}
-		if (class'UIUtilities_LW'.static.FullSalvage(MissionState))
-		{
-			BriefingString $= class'UIUtilities_LW'.default.m_strGetCorpses $ "\n";
-		}
-		BriefingString $= class'UIUtilities_LW'.static.GetMissionConcealStatusString (XComHQ.MissionRef) $ "\n";
-		BriefingString $= "\n";
-		BriefingString $= "<font face='$TitleFont' size='22' color='#a7a085'>" $ CAPS(strAreaOfOperations) $ "</font>\n";
-		BriefingString $= "<font face='$NormalFont' size='22' color='#" $ class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR $ "'>";
-		BriefingString $= class'UIUtilities_LW'.static.GetPlotTypeFriendlyName(MissionState.GeneratedMission.Plot.strType);
-		BriefingString $= "\n";
-		BriefingString $= "</font>";
-		MissionBriefText.SetHTMLText (BriefingString);
-		*/
+		// LW : Create the SquadContainer on a timer, to avoid creation issues that can arise when creating it immediately, when no pawn loading is present
+		SquadContainer.DelayedInit(0.75);
+		
+		
+		
+		SquadSelect.bDirty = true; // Workaround for bug in currently published version of squad select
+		SquadSelect.UpdateData();
+		SquadSelect.UpdateNavHelp();
 	}
 }
 
@@ -305,6 +279,7 @@ event OnRemoved(UIScreen Screen)
 				SquadMgr = XComGameState_LWSquadManager(NewGameState.CreateStateObject(class'XComGameState_LWSquadManager', SquadMgr.ObjectID));
 				NewGameState.AddStateObject(SquadMgr);
 				SquadMgr.LaunchingMissionSquad = NullRef;
+				SquadMgr.UpdateAllSquads();
 				`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 			}
 		}

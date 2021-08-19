@@ -18,6 +18,12 @@ class X2DownloadableContentInfo_SquadManager extends X2DownloadableContentInfo;
 // Called when mod is first installed in an ongoing campaign - Thanks to TeslaRage for providing this snippet
 static event OnLoadedSavedGame()
 {
+    OnLoadedSavedGameToStrategy();
+}
+
+
+static event OnLoadedSavedGameToStrategy()
+{
     local XComGameState NewGameState;
     local XComGameState_LWSquadManager SquadMgrState;
     local bool bSquadManagerExist;
